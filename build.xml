@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<project name="EdgeLabs Commons" default="build" basedir=".">
+
+    <property file="${project.basedir}/build.properties"/>
+
+    <exec executable="which" outputProperty="php_executable">
+        <arg value="php" />
+    </exec>
+
+    <target name="prepare">
+        <mkdir dir="build" />
+    </target>
+
+    <target name="build" depends="prepare,composer">
+        <exec executable="${php_executable}">
+            <arg value="build/composer.phar" />
+            <arg value="archive" />
+            <arg value="--dir=build" />
+        </exec>
+    </target>
+
+    <!-- Unit tests -->
+    <target name="test:unit" description="Executes unit tests.">
+        <echo msg="Running unit tests ..." />
+        <exec command="phpunit --log-junit ${dir.reports}/phpunit.xml -c ${project.basedir}" passthru="true" checkreturn="true"/>
+    </target>
+
+    <target name="test:unit:coverage" description="Executes unit tests with coverage.">
+        <echo msg="Running unit tests with coverage..." />
+        <exec command="phpunit --log-junit ${dir.reports}/phpunit.xml --coverage-clover ${dir.reports.coverage}/clover.xml --coverage-html ${dir.reports.coverage}/ -c ${project.basedir} --strict-coverage" passthru="true" checkreturn="true"/>
+    </target>
+
+    <target name="composer" depends="composer-check,composer-download">
+        <exec executable="${php_executable}">
+            <arg value="build/composer.phar" />
+            <arg value="install" />
+        </exec>
+    </target>
+
+    <target name="composer-check" depends="prepare">
+        <available file="build/composer.phar" property="composer.present"/>
+    </target>
+
+    <target name="composer-download" unless="composer.present">
+        <exec executable="wget">
+            <arg value="-Obuild/composer.phar" />
+            <arg value="http://getcomposer.org/composer.phar" />
+        </exec>
+    </target>
+
+</project>
