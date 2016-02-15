@@ -30,7 +30,7 @@ abstract class GoogleClient
     /**
      * @var string (file content)
      */
-    protected $privateKey;
+    private $privateKey;
 
     /**
      * @param string $clientId     Your analytics client id
@@ -66,6 +66,13 @@ abstract class GoogleClient
         return $client;
     }
 
+    public function getPrivateKey() {
+        if ($json = json_decode($this->privateKey)) {
+            return $json->private_key;
+        } else {
+            return $this->privateKey;
+        }
+    }
 }
 
 ?>

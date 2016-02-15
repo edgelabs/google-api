@@ -26,13 +26,11 @@ class GoogleAnalyticsToken extends GoogleClient
         $scopes = array(Google_Service_Analytics::ANALYTICS_READONLY);
         $client = $this->createClient('dashboard statistics', $scopes);
 
-        //$service = new Google_Service_Analytics($client);
-
         if (isset($_SESSION['service_token']) && !empty($_SESSION['service_token'])){
             $client->setAccessToken($_SESSION['service_token']);
         }
 
-        $credential = new Google_Auth_AssertionCredentials($this->serviceAccountName, $scopes, $this->privateKey);
+        $credential = new Google_Auth_AssertionCredentials($this->serviceAccountName, $scopes, $this->getPrivateKey());
         $client->setAssertionCredentials($credential);
         if ($client->getAuth()->isAccessTokenExpired()) {
             $client->getAuth()->refreshTokenWithAssertion($credential);
